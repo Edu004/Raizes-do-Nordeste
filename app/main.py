@@ -55,6 +55,7 @@ Base.metadata.create_all(bind=engine)
 
 
 
+
 @app.get("/health", summary="Verifica saúde da API")
 def healthcheck():
     """
