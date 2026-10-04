@@ -54,7 +54,7 @@ class PedidoBase(BaseModel):
     canal_pedido: str
     status: str = "PENDENTE"
     total: float
-    itens : list[ItemPedidoUpdate] = []#mudar pelo base? lista de itens de cada pedido
+    itens : list[ItemPedidoBase] = []#listar conforme a base de um item do pedido
 
 class PedidoUpdate(PedidoBase):
     #criar/atualizar pedidos

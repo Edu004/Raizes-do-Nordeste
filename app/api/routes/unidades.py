@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends , HTTPException
 from sqlalchemy.orm import Session
 
 from app.infraestructure.database import get_db
@@ -37,6 +37,23 @@ def listar_unidades(
     return unidades
 
 
+@router.get("/{unidade_id}")
+def consultar_unidade_id(unidade_id: int, db: Session = Depends(get_db)):
+    unidade = db.query(Unidade).filter(Unidade.id == unidade_id).first()
+    if not unidade:
+        raise HTTPException(status_code=404, detail="Unidade não encontrada")
+    return unidade
+
+@router.put("/{unidade_id}")
+def atualizar_unidade(unidade_id: int, dados: UnidadeBase, db: Session = Depends(get_db)):
+    unidade = db.query(Unidade).filter(Unidade.id == unidade_id).first()
+    if not unidade:
+        raise HTTPException(status_code=404, detail="Unidade não encontrada")
+    for key, value in dados.model_dump().items():
+        setattr(unidade, key, value)
+    db.commit()
+    db.refresh(unidade)
+    return unidade
 
 
 

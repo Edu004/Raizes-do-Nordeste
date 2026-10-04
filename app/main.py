@@ -5,7 +5,7 @@
 from app.infraestructure.database import Base, engine
 from app.infraestructure.database import get_db
 from fastapi import FastAPI, Depends, HTTPException, Query
-from app.api.routes import auth, unidades, produtos, estoque, pedidos, pagamentos 
+from app.api.routes import auth, unidades, produtos, produto_unidade, estoque, pedidos, pagamentos 
 
 
 
@@ -18,6 +18,7 @@ app = FastAPI(title="Raízes do Nordeste - API",
 app.include_router(auth.router)
 app.include_router(unidades.router)
 app.include_router(produtos.router)
+app.include_router(produto_unidade.router)
 app.include_router(estoque.router)
 app.include_router(pedidos.router)
 app.include_router(pagamentos.router)

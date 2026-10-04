@@ -23,11 +23,10 @@ def criar_Estoque(
     db: Session = Depends(get_db)
 ):
     nova = Estoque(**dados.model_dump())
-
     db.add(nova)
     db.commit()
     db.refresh(nova)
-
+    #gerando dicionario do estoque ao ser criado e commitado
     return {
         "id": nova.id,
         "unidade_id": nova.unidade_id,

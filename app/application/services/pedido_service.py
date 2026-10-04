@@ -29,7 +29,6 @@ def criar_pedido(
     itens:list
 ):
     #verificar unidade
-#
     unidade = db.query(Unidade).filter(Unidade.id == unidade_id).first()
     if not unidade:
         raise HTTPException(status_code=404, detail="Unidade não encontrada")
@@ -39,6 +38,17 @@ def criar_pedido(
         raise HTTPException(status_code=422, detail="Canal de pedido inválido")
     #passando pela validação de canal e depois ir pelos itens
     total = 0
+    #criar pedido
+    novo_pedido = Pedido(
+    unidade_id=unidade_id,
+    cliente_id=cliente_id,
+    canal_pedido=canal_pedido,
+    status="PENDENTE",
+    total=total
+    )   
+    db.add(novo_pedido)
+    db.flush()
+
     for item in itens:
         #para cada item:
         #verificar produto
@@ -64,31 +74,23 @@ def criar_pedido(
             detail=f"Estoque insuficiente para o produto {item.produto_id}"
         )#existindo produto e estoque necessário,criar novo item
         
+        novo_item = ItemPedido(
+                    pedido_id=novo_pedido.id,
+                    produto_id=item.produto_id,
+                    quantidade=item.quantidade,
+                    valor_unitario=produto_unidade.preco  # o preço do banco, de novo
+                    )
+        
+        db.add(novo_item)
         total += produto_unidade.preco * item.quantidade
+        novo_pedido.total = total
         #validar preço do pedido antes de criar ele
         #calcular total
         #diminuir do estoque e mostrar o que foi pago,ir para o pagamento_service nessa parte*
     
-    #criar pedido
-    novo_pedido = Pedido(
-    unidade_id=unidade_id,
-    cliente_id=cliente_id,
-    canal_pedido=canal_pedido,
-    status="PENDENTE",
-    total=total
-    )   
-    db.add(novo_pedido)
-    db.flush()  # gera o id do pedido, mas não fecha a transação ainda para que ela termine de ser validada no commit depois
-    novo_item = ItemPedido(
-            pedido_id=novo_pedido.id,
-            produto_id=item.produto_id,
-            quantidade=item.quantidade,
-            valor_unitario=produto_unidade.preco  # o preço do banco, de novo
-            )
-
-    db.add(novo_item)
-    db.commit()
+      # gera o id do pedido, mas não fecha a transação ainda para que ela termine de ser validada no commit depois
     db.refresh(novo_pedido)
+    db.commit()
     return novo_pedido
 #
     #se aprovado e gerado: aí daqui em diante é no pagamento_service
@@ -115,7 +117,7 @@ def atualizar_status(db: Session,
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
 
-    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#mudar a lógica e nao usar .get
+    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#dicionario validado
     if novo_status not in permitidos:
         raise HTTPException(
             status_code=409,
