@@ -1,10 +1,10 @@
 
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.infraestructure.database import get_db
-from app.domain.models import Estoque
+from app.domain.models import Estoque,Unidade
 from app.schemas import EstoqueBase
 
 
@@ -40,10 +40,12 @@ def listar_estoque(
 
 
 @router.get("/unidades/{unidade_id}")
-def consultar_estoque_id(unidade_id: int,db: Session = Depends(get_db)):
-	estoque = db.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
-	return estoque
-
+def consultar_estoque_id(unidade_id: int, db: Session = Depends(get_db)):
+    unidade = db.query(Unidade).filter(Unidade.id == unidade_id).first()
+    if not unidade:
+        raise HTTPException(status_code=404, detail="Unidade não encontrada")
+    estoque = db.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
+    return estoque
 
 #terminar tudo!
 

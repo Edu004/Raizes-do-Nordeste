@@ -51,7 +51,7 @@ def autenticar_cliente(
     )
 
     if not cliente:
-        return None
+        raise HTTPException(status_code=401, detail="Credenciais inválidas")
 
     if not verificar_senha(senha, cliente.senha_hash):
         raise HTTPException(

@@ -63,7 +63,6 @@ class PedidoOut(PedidoBase):
     #o que irá vir para o cliente
     id: int
     unidade_id: int
-    cupom_id: int
     canal_pedido: str
     status: str
     total: float

@@ -1,6 +1,6 @@
 
 from sqlalchemy.orm import Session
-from app.domain.models import Pagamento, Pedido
+from app.domain.models import Pagamento, Pedido, ItemPedido ,Estoque
 
 
 
@@ -37,26 +37,20 @@ def processar_pagamento(
 
     if status == "APROVADO":
         pedido.status = "CONFIRMADO"
-        #logica de decrementar produtos do pedido no estoque
-        
-        for item in pedido.itens:
-            produto_unidade = (
-                db.query(Pagamento)
-                .filter(
-                    Pagamento.produto_id == item.produto_id,
-                    Pagamento.unidade_id == pedido.unidade_id
-                )
-                .first()
-            )
-            if produto_unidade:
-                produto_unidade.quantidade -= item.quantidade
-                db.commit()
+        itens_do_pedido = db.query(ItemPedido).filter(ItemPedido.pedido_id == pedido_id).all()
+        for item in itens_do_pedido:
+            estoque = db.query(Estoque).filter(
+            Estoque.produto_id == item.produto_id,
+            Estoque.unidade_id == pedido.unidade_id
+        ).first()
+        if estoque:
+            estoque.quantidade -= item.quantidade
 
-    
+    db.commit()
     db.refresh(pagamento)
-
     return pagamento, None
 
+            #buscar itens de cada pedido no estoque
 
 
 

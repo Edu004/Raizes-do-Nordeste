@@ -25,7 +25,6 @@ def criar_pedido(
     unidade_id: int,
     cliente_id: int,
     canal_pedido: str,
-    #total: float, testar rodar sem ele
     itens:list
 ):
     #verificar unidade
@@ -36,6 +35,8 @@ def criar_pedido(
     
     elif canal_pedido not in [c.value for c in enums.CanalPedido]:
         raise HTTPException(status_code=422, detail="Canal de pedido inválido")
+    elif not itens:
+        raise HTTPException(status_code=422, detail="O pedido precisa ter ao menos 1 item")
     #passando pela validação de canal e depois ir pelos itens
     total = 0
     #criar pedido
@@ -89,8 +90,8 @@ def criar_pedido(
         #diminuir do estoque e mostrar o que foi pago,ir para o pagamento_service nessa parte*
     
       # gera o id do pedido, mas não fecha a transação ainda para que ela termine de ser validada no commit depois
-    db.refresh(novo_pedido)
     db.commit()
+    db.refresh(novo_pedido)
     return novo_pedido
 #
     #se aprovado e gerado: aí daqui em diante é no pagamento_service
@@ -106,12 +107,11 @@ def criar_pedido(
 
 def listar_pedidos(db: Session,canal_pedido: str = None):
     query = db.query(Pedido)
-
     if canal_pedido:
         query = query.filter(Pedido.canal_pedido == canal_pedido)
-        return query.all()
+    return query.all()
 
-        
+
 
 def atualizar_status(db: Session,
     id: int,
