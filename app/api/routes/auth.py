@@ -14,9 +14,9 @@ def registrar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
     return auth_service.registrar_cliente(db=db, nome=cliente.nome, senha=cliente.senha,tipo_cliente=cliente.tipo_cliente)
 
 
-@router.post("/login")
-def autenticar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
-    return auth_service.autenticar_cliente(db= db,nome=cliente.nome,senha= cliente.senha)
+#@router.post("/login")
+#def autenticar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
+#    return auth_service.autenticar_cliente(db= db,nome=cliente.nome,senha= cliente.senha)
 
 
 #este def já usa nome e senha,igual o de cima e está com nome login tambem,considerar apagar no futuro

@@ -35,3 +35,4 @@ def atualizar_status(id: int, novo_status: str, db: Session = Depends(get_db)):
 
 
 
+

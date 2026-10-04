@@ -27,7 +27,7 @@ def registrar_cliente(
     novo_cliente = Cliente(
         tipo_cliente=tipo_cliente,
         nome=nome,
-        senha=gerar_hash_senha(senha)
+        senha_hash=gerar_hash_senha(senha)
     )
 
     db.add(novo_cliente)

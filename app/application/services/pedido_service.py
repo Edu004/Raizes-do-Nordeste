@@ -1,24 +1,22 @@
 
 
 from http.client import HTTPException
-
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from starlette.exceptions import HTTPException
-from app.domain.models import Pedido,ProdutoUnidade,ItemPedido
+from app.domain.models import Pedido,ProdutoUnidade,ItemPedido,Unidade,Estoque
 from app.domain import enums
-from app.schemas import ProdutoUnidadeBase
-from app.schemas import ItemPedidoBase,ItemPedidoUpdate
+#from app.schemas import ProdutoUnidadeBase nao estao sendo usados
+#from app.schemas import ItemPedidoBase,ItemPedidoUpdate
 
 
 # mapa de transições permitidas em conformidade com enums
 TRANSICOES_PERMITIDAS = {
     "PENDENTE": ["CONFIRMADO", "CANCELADO"],
     "CONFIRMADO": ["EM_PREPARACAO", "CANCELADO"],
-    "EM_PREPARACAO": ["PRONTO", "CANCELADO"],
-    "PRONTO": ["ENTREGUE", "CANCELADO"],
-    "ENTREGUE": ["CONCLUIDO", "CANCELADO"],
+    "EM_PREPARACAO": ["PRONTO"],
+    "PRONTO": ["ENTREGUE"],
+    "ENTREGUE": [],
     "CANCELADO": []
-
 }
 
 
@@ -32,56 +30,74 @@ def criar_pedido(
 ):
     #verificar unidade
 #
-    if unidade_id != 0:
-        pass
-    else:
-        return "Unidade indisponível"
-        #como validar a unidade?
-
-    #para cada item:
-    #    verificar produto
-    #    verificar disponibilidade
-    #    verificar estoque
-
-    #validar preço do pedido antes de criar ele
-    if canal_pedido not in [c.value for c in enums.CanalPedido]:
-        return "Canal de pedido inválido"
-    #passando pela validação de canal começar o valor
+    unidade = db.query(Unidade).filter(Unidade.id == unidade_id).first()
+    if not unidade:
+        raise HTTPException(status_code=404, detail="Unidade não encontrada")
+        # existe na unidade?
+    
+    elif canal_pedido not in [c.value for c in enums.CanalPedido]:
+        raise HTTPException(status_code=422, detail="Canal de pedido inválido")
+    #passando pela validação de canal e depois ir pelos itens
     total = 0
     for item in itens:
-        #diminuir do estoque e mostrar o que foi pago
+        #para cada item:
+        #verificar produto
+        #verificar disponibilidade
         produto_unidade = db.query(ProdutoUnidade).filter(
             ProdutoUnidade.produto_id == item.produto_id,
             ProdutoUnidade.unidade_id == unidade_id
         ).first()
+        #se não estiver disponivel na unidade selecionada
+        if not produto_unidade:
+            raise HTTPException(
+            status_code=404,
+            detail=f"Produto {item.produto_id} não disponível nessa unidade"
+        )
+        #verificar estoque
+        estoque = db.query(Estoque).filter(
+        Estoque.produto_id == item.produto_id,
+        Estoque.unidade_id == unidade_id
+        ).first()
+        if not estoque or estoque.quantidade < item.quantidade:
+            raise HTTPException(
+            status_code=409,
+            detail=f"Estoque insuficiente para o produto {item.produto_id}"
+        )#existindo produto e estoque necessário,criar novo item
+        novo_item = ItemPedido(
+        pedido_id=novo_pedido.id,
+        produto_id=item.produto_id,
+        quantidade=item.quantidade,
+        valor_unitario=produto_unidade.preco  # o preço do banco, de novo
+        )
+        db.add(novo_item)
         total += produto_unidade.preco * item.quantidade
+        #validar preço do pedido antes de criar ele
         #calcular total
+        #diminuir do estoque e mostrar o que foi pago,ir para o pagamento_service nessa parte*
     
     #criar pedido
-    
     novo_pedido = Pedido(
-        unidade_id=unidade_id,
-        cliente_id=cliente_id,
-        canal_pedido=canal_pedido,
-        status="PENDENTE",
-        total=total
-    )
+    unidade_id=unidade_id,
+    cliente_id=cliente_id,
+    canal_pedido=canal_pedido,
+    status="PENDENTE",
+    total=total
+    )   
     db.add(novo_pedido)
+    db.flush()  # gera o id do pedido, mas não fecha a transação ainda para que ela termine de ser validada no commit depois
     db.commit()
     db.refresh(novo_pedido)
-
-    #criar itens, como fazer?
-    #solicitar pagamento
-
-    #analisar resultado
-    #atualizar status
+    return novo_pedido
 #
-    #se aprovado: aí daqui em diante é no pagamento_service
+    #se aprovado e gerado: aí daqui em diante é no pagamento_service
     #    atualizar estoque
     #salvar alterações
-    #retornar pedido    
+
+    #solicitar pagamento
+    #analisar resultado
+    #atualizar status
     
-    return novo_pedido
+    
 
 
 def listar_pedidos(
