@@ -18,17 +18,17 @@ def verificar_senha(senha: str, hashed: str) -> bool:
     return bcrypt.checkpw(senha.encode('utf-8'), hashed.encode('utf-8'))
 
 def gerar_token(payload: dict, expira_em_minutos: int = 30) -> str:
-    """
-    Gera um token JWT com o payload fornecido e tempo de expiração.
-
-    rever como que isso será feito pois o id do cliente não é um dicionário!!!
-    
-    """
-    payload_copy = payload.copy()
-    payload_copy['exp'] = datetime.utcnow() + timedelta(minutes=expira_em_minutos)
-    secret_key = os.getenv("JWT_SECRET_KEY", "sua_chave_secreta_aqui")
-    token = jwt.encode(payload_copy, secret_key, algorithm="HS256")
-    return token
+    #"""
+    #Gera um token JWT com o payload fornecido e tempo de expiração.
+#
+    #rever como que isso será feito pois o id do cliente não é um dicionário!!!
+    #
+    #"""
+    #payload_copy = payload.copy()
+    #payload_copy['exp'] = datetime.utcnow() + timedelta(minutes=expira_em_minutos)
+    #secret_key = os.getenv("JWT_SECRET_KEY", "sua_chave_secreta_aqui")
+    #token = jwt.encode(payload_copy, secret_key, algorithm="HS256")
+    return auth_service.autenticar_cliente(db: Session,cliente_id: int,senha: str)
 
 
 

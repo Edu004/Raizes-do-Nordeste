@@ -17,7 +17,7 @@ def criar_unidade(
     dados: UnidadeBase,
     db: Session = Depends(get_db)
 ):
-    nova = UnidadeUpdate(**dados.model_dump())
+    nova = Unidade(**dados.model_dump())
 
     db.add(nova)
     db.commit()

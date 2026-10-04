@@ -8,12 +8,10 @@ from pydantic import BaseModel
 class ClienteBase(BaseModel):
     nome:str
     senha:str
-    usuario_id: Optional[int]
+    tipo_cliente:str
+    usuario_id: Optional[int]#como tratar disso no auth?
 
 
-class LoginRequest(BaseModel):
-    nome: str
-    senha: str
 
 
 class ClienteUpdate(ClienteBase):
@@ -25,6 +23,12 @@ class ClienteUpdate(ClienteBase):
     
     class Config:
         orm_mode = True
+
+class LoginRequest(BaseModel):
+    nome: str
+    #email:str usar email para validar?
+    senha: str
+
 
 class ItemPedidoBase(BaseModel):
     produto_id: int
@@ -76,7 +80,6 @@ class PedidoOut(PedidoBase):
     status: str
     total: float
     produtos : list[ProdutoUpdate] = []
-    clientes : list[ClienteUpdate] = []#lista de clientes na classe pedido? um cliente só com um pedido é melhor
 
     class Config:
         orm_mode = True  # Permite compatibilidade com ORM (SQLAlchemy)
@@ -126,10 +129,10 @@ class EstoqueUpdate(EstoqueBase):
     """
     quantidade: Optional[int] = None
 
+
 class PagamentoBase(BaseModel):
     pedido_id: int
     valor: float
-
 
 
 class PagamentoUpdate(PagamentoBase ):

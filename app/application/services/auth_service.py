@@ -11,12 +11,12 @@ from app.infraestructure.security import (
 def registrar_cliente(
     db: Session,
     nome: str,
-    cliente_id: int,
-    senha: str
+    senha: str,
+    tipo_cliente:str
 ):
     cliente_existente = (
         db.query(Cliente)
-        .filter(Cliente.id == cliente_id)
+        .filter(Cliente.nome == nome)
         .first()
     )
 
@@ -24,7 +24,7 @@ def registrar_cliente(
         return None
 
     novo_cliente = Cliente(
-        id=cliente_id,
+        tipo_cliente=tipo_cliente,
         nome=nome,
         senha_hash=gerar_senha(senha)
     )
@@ -38,12 +38,13 @@ def registrar_cliente(
 
 def autenticar_cliente(
     db: Session,
-    cliente_id: int,
-    senha: str
+    nome: str,
+    senha: str,
+    tipo_cliente:str
 ):
     cliente = (
         db.query(Cliente)
-        .filter(Cliente.id == cliente_id)
+        .filter(Cliente.nome == nome)
         .first()
     )
 

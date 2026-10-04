@@ -13,7 +13,7 @@ from app.infraestructure.database import Base
 class Cliente(Base):
     __tablename__ = "usuarios"
 
-    id = Column(Integer, primary_key=True, autoincrement=True , index=True)#autoincrement para ir atualizando o id com o tempo
+    id = Column(Integer, primary_key=True, autoincrement=True , index=True)#autoincrement para ir atualizando o id com o tempo e conforme for sendo criado novos clientes
     nome = Column(String(150), nullable=True, index=True)
     tipo_cliente = Column(String(100), nullable=False, index=True)
     senha_hash = Column(String(255), nullable=True)

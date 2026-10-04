@@ -1,75 +1,55 @@
 
 
 from contextlib import closing
-from pathlib import Path
-
-
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
 
 
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-# String de conexão SQLite (arquivo local estoque.db)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./estoque.db"
-
-# Engine com check_same_thread=False para uso com FastAPI/async (threading)
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-
-# SessionLocal será injetada nos endpoints para transações com o BD
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from app.infraestructure.database import get_db
+from app.domain.models import Estoque
+from app.schemas import EstoqueBase, EstoqueUpdate
 
 
-Base = declarative_base()
 
-# Dependência de sessão para FastAPI (garante abertura e fechamento)
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 router = APIRouter(prefix="/estoque", tags=["Estoque"])
 
 
+@router.post("/", status_code=201)
+def criar_Estoque(
+    dados: EstoqueBase,
+    db: Session = Depends(get_db)
+):
+    nova = Estoque(**dados.model_dump())
 
-class ProdutoEstoque(BaseModel):
-	nome: str = Field(min_length=1)
-	unidade: str = Field(default="un")
-	quantidade: float = Field(gt=0)
-	id: int = Field(ge=0)
+    db.add(nova)
+    db.commit()
+    db.refresh(nova)
+
+    return {
+        "id": nova.id,
+        "unidade_id": nova.unidade_id,
+        "produto_id": nova.produto_id,
+        "quantidade": nova.quantidade
+    }
 
 
-class ItemVenda(BaseModel):
-	produto_id: int
-	quantidade: float = Field(gt=0)
+@router.get("/")
+def listar_estoque(
+	db: Session = Depends(get_db)
+):
+	estoque = db.query(Estoque).all()
+	return estoque
 
 
-class VendaEntrada(BaseModel):
-	itens: list[ItemVenda] = Field(min_length=1)
-	produtos: list[ProdutoEstoque] = Field(min_length=1)
-	quantidade: float = Field(gt=0)
-
-
-
-@router.get("/unidades/{unidade_id}/cardapio", response_model=list[ProdutoEstoque])
-def consultar_estoque(unidade_id: int):
-      
-	"""
-	Consulta o estoque de uma unidade específica.
-	"""
-	with closing(SessionLocal()) as db:
-		# Consulta os produtos no estoque da unidade
-		produtos_estoque = db.query(ProdutoEstoque).filter(ProdutoEstoque.unidade_id == unidade_id).all()
-		if not produtos_estoque:
-			raise HTTPException(status_code=404, detail="Estoque não encontrado para a unidade especificada")
-		return produtos_estoque
+@router.get("/unidades/{unidade_id}/cardapio", response_model=list[Estoque])
+def consultar_estoque_id(unidade_id: int):
+	db: Session = Depends(get_db)
+	with closing(db) as session:
+		estoque = session.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
+		return estoque
 
 
 #terminar tudo!
