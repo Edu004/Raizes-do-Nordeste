@@ -1,14 +1,15 @@
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from app.domain.models import Cliente
-from app.schemas import ClienteBase, LoginRequest 
+#from app.schemas import ClienteBase, LoginRequest 
+
 from app.infraestructure.security import (
     gerar_hash_senha,
     verificar_senha,
     gerar_token
-)
+)#importar funções de lgpd
 
-
+#registrar e validar cliente por senha e seu tipo
 def registrar_cliente(
     db: Session,
     nome: str,

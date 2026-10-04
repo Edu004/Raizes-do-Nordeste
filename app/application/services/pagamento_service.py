@@ -14,11 +14,11 @@ def processar_pagamento(
         .filter(Pedido.id == pedido_id)
         .first()
     )
-
+    #procurar pedido
     if not pedido:
         return None, "Pedido não encontrado"
 
-    # MOCK DE PAGAMENTO
+    #só validar se for igual ao valor total
     pagamento_aprovado = valor == float(pedido.total)
 
     if pagamento_aprovado:

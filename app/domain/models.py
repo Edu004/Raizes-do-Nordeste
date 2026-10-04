@@ -40,7 +40,7 @@ class ProdutoUnidade(Base):
 
     produto_id = Column(Integer, ForeignKey("produtos.id"), index=True)
     unidade_id = Column(Integer, ForeignKey("unidades.id"), index=True)
-    preco = Column(Numeric(10,2), nullable=False)#colocar seu valor no produto
+    preco = Column(Numeric(10,2), nullable=False)#preco variavel de unidade por unidade
     disponivel_de = Column(DateTime(timezone=True), nullable=False)#periodo de tempo de promoções
     disponivel_ate = Column(DateTime(timezone=True), nullable=True)
 
