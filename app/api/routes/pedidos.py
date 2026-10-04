@@ -25,7 +25,7 @@ def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
 )
 #criar função de listar e jogar ela para o service
 def listar_pedidos(pedido:PedidoBase,db:Session = Depends(get_db)):
-    return pedido_service.listar_pedidos(pedidod=pedido,db=db)
+    return pedido_service.listar_pedidos(pedido=pedido,db=db)
 
 
 @router.patch("/{pedido_id}/status")

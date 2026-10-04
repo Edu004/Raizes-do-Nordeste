@@ -55,22 +55,9 @@ def criar_pedido(
             ProdutoUnidade.unidade_id == unidade_id
         ).first()
         total += produto_unidade.preco * item.quantidade
+        #calcular total
     
-    #calcular total
-    
-
-#
     #criar pedido
-    #criar itens
-    #solicitar pagamento
-
-    #analisar resultado
-    #atualizar status
-#
-    #se aprovado:
-    #    atualizar estoque
-    #salvar alterações
-    #retornar pedido    
     
     novo_pedido = Pedido(
         unidade_id=unidade_id,
@@ -83,6 +70,17 @@ def criar_pedido(
     db.commit()
     db.refresh(novo_pedido)
 
+    #criar itens, como fazer?
+    #solicitar pagamento
+
+    #analisar resultado
+    #atualizar status
+#
+    #se aprovado: aí daqui em diante é no pagamento_service
+    #    atualizar estoque
+    #salvar alterações
+    #retornar pedido    
+    
     return novo_pedido
 
 

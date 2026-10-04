@@ -1,5 +1,3 @@
-# schemas.py
-# Modelos Pydantic para entrada/saída da API (validação e serialização)
 
 from typing import Optional
 from pydantic import BaseModel
@@ -9,15 +7,13 @@ class ClienteBase(BaseModel):
     nome:str
     senha:str
     tipo_cliente:str
-    usuario_id: Optional[int]#como tratar disso no auth?
+    #usuario_id: Optional[int]#como tratar disso no auth tirar por enquanto
 
 
 
 
 class ClienteUpdate(ClienteBase):
-    """
-    Base de dados para criar/atualizar clientes.
-    """
+    #atualizar clientes
     nome: Optional[str] = None
     usuario_id: Optional[int] = None
     
@@ -36,9 +32,7 @@ class ProdutoBase(BaseModel):
     categoria: str
 
 class ProdutoUpdate(ProdutoBase):
-    """
-    Base de dados para criar/atualizar produtos.
-    """
+    #atualizar produtos
     nome: Optional[str] = None
     categoria: Optional[str] = None
 
@@ -49,9 +43,7 @@ class ItemPedidoBase(BaseModel):
     preco_unitario: float
 
 class ItemPedidoUpdate(ItemPedidoBase):
-    """
-    Base de dados para criar/atualizar itens de pedido.
-    """
+    #criar ou atualizar itens de pedidos
     quantidade: Optional[int] = None
     preco_unitario: Optional[float] = None
 
@@ -65,16 +57,12 @@ class PedidoBase(BaseModel):
     itens : list[ItemPedidoUpdate] = []
 
 class PedidoUpdate(PedidoBase):
-    """
-    Base de dados para criar/atualizar pedidos.
-    """
+    #criar/atualizar pedidos
     status: Optional[str] = None
     total: Optional[float] = None
 
 class PedidoOut(PedidoBase):
-    """
-    Resposta enviada ao cliente.
-    """
+    #o que irá vir para o cliente
     id: int
     unidade_id: int
     cupom_id: int
@@ -98,9 +86,7 @@ class UnidadeUpdate(UnidadeBase):
 
 
 class ProdutoUnidadeBase(BaseModel):
-    """
-    Base de dados para criar/atualizar produto em unidade.
-    """
+    #atualizar produto proprio de cada unidade
     produto_id: int
     unidade_id: int
     preco: float
@@ -108,9 +94,7 @@ class ProdutoUnidadeBase(BaseModel):
     disponivel_ate: Optional[str] = None  # ISO 8601 date string
 
 class ProdutoUnidadeUpdate(ProdutoUnidadeBase):
-    """
-    Base de dados para criar/atualizar produto em unidade.
-    """
+    #criar/atualizar produto da unidade
     preco: Optional[float] = None
     disponivel_de: Optional[str] = None  # ISO 8601 date string
     disponivel_ate: Optional[str] = None  # ISO 8601 date string
@@ -118,17 +102,13 @@ class ProdutoUnidadeUpdate(ProdutoUnidadeBase):
 
 
 class EstoqueBase(BaseModel):
-    """
-    Base de dados para criar/atualizar estoque.
-    """
+    #criar estoque
     unidade_id: int
     produto_id: int
     quantidade: int
 
 class EstoqueUpdate(EstoqueBase):
-    """
-    Base de dados para criar/atualizar estoque.
-    """
+    #atualizar estoque
     quantidade: Optional[int] = None
 
 
@@ -138,9 +118,7 @@ class PagamentoBase(BaseModel):
 
 
 class PagamentoUpdate(PagamentoBase ):
-    """
-    Base de dados para criar/atualizar pagamento.
-    """
+    #atualizar status de pagamento
     status_pag: Optional[str] = None
     valor: Optional[float] = None
 

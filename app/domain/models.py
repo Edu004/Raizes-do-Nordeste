@@ -1,9 +1,7 @@
 
 
 
-# models.py
-
-from decimal import Decimal
+from decimal import Decimal #usar?
 
 from sqlalchemy import Boolean, Column, Integer, String, DateTime , Numeric , ForeignKey
 from app.infraestructure.database import Base
@@ -18,6 +16,7 @@ class Cliente(Base):
     tipo_cliente = Column(String(100), nullable=False, index=True)
     senha_hash = Column(String(255), nullable=True)
     conslgpd = Column(Boolean, default = True)
+    perfil = Column(String(50), nullable=True, index=True)
 
 class Unidade(Base):
     __tablename__ = "unidades"
@@ -59,7 +58,7 @@ class Pedido(Base):
     id = Column(Integer, primary_key=True, index=True)
     unidade_id = Column(Integer, ForeignKey("unidades.id"), index=True, nullable=False)
     cliente_id = Column(Integer, ForeignKey("usuarios.id"), index=True, nullable=True)#opcional,deixar possível a criação de clientes anonimos
-    cupom_id = Column(Integer, ForeignKey("cupons.id"), index=True, nullable=False)
+    cupom_id = Column(Integer, ForeignKey("cupons.id"), index=True, nullable=True)
     canal_pedido = Column(String(50), nullable=False, index=True)
     status = Column(String(50), nullable=False, index=True)
     total = Column(Numeric(10,2), nullable=False)

@@ -14,6 +14,7 @@ app = FastAPI(title="Raízes do Nordeste - API",
             version="1.0.0"
 )
 
+#import de todos os router junto de seus services posteriormente
 app.include_router(auth.router)
 app.include_router(unidades.router)
 app.include_router(produtos.router)
