@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.infraestructure.database import get_db
 from app.domain.models import Estoque
-from app.schemas import EstoqueBase, EstoqueUpdate
+from app.schemas import EstoqueBase
 
 
 
@@ -45,11 +45,9 @@ def listar_estoque(
 
 
 @router.get("/unidades/{unidade_id}/cardapio", response_model=list[Estoque])
-def consultar_estoque_id(unidade_id: int):
-	db: Session = Depends(get_db)
-	with closing(db) as session:
-		estoque = session.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
-		return estoque
+def consultar_estoque_id(unidade_id: int,db: Session = Depends(get_db)):
+	estoque = db.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
+	return estoque
 
 
 #terminar tudo!

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-
+from fastapi import APIRouter, Depends, HTTPException
 from app.domain.models import Cliente
+from app.schemas import ClienteBase, LoginRequest 
 from app.infraestructure.security import (
     gerar_senha,
     verificar_senha,
@@ -40,7 +41,7 @@ def autenticar_cliente(
     db: Session,
     nome: str,
     senha: str,
-    tipo_cliente:str
+    tipo_cliente: str
 ):
     cliente = (
         db.query(Cliente)
@@ -60,6 +61,26 @@ def autenticar_cliente(
 
     return token
 
+def login(db: Session,
+    request:str,
+    nome: str,
+    senha: str,
+    tipo_cliente: str):
 
+    # Verifica se o usuário existe
+    cliente = db.query(Cliente).filter(Cliente.nome == request.nome).first()#como tratar em casosde clientes anonimos?
+    if not cliente or not verificar_senha(request.senha, cliente.senha_hash):
+        raise HTTPException(status_code=401, detail="Senha inválida")
+    
+    # Gera token JWT
+    token = gerar_token(
+        id=str(cliente.id),
+        nome=cliente.nome,
+        tipo_cliente=cliente.tipo_cliente
+    )#mudando de .id para um dicionário juntando as variaveis
+    
+    return {"access_token": token, 
+            "token_type": "bearer"
+            }
 
 

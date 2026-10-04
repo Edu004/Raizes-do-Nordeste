@@ -30,17 +30,6 @@ class LoginRequest(BaseModel):
     senha: str
 
 
-class ItemPedidoBase(BaseModel):
-    produto_id: int
-    quantidade: int
-    preco_unitario: float
-
-class ItemPedidoUpdate(ItemPedidoBase):
-    """
-    Base de dados para criar/atualizar itens de pedido.
-    """
-    quantidade: Optional[int] = None
-    preco_unitario: Optional[float] = None
 
 class ProdutoBase(BaseModel):
     nome: str
@@ -52,6 +41,19 @@ class ProdutoUpdate(ProdutoBase):
     """
     nome: Optional[str] = None
     categoria: Optional[str] = None
+
+
+class ItemPedidoBase(BaseModel):
+    produto_id: int
+    quantidade: int
+    preco_unitario: float
+
+class ItemPedidoUpdate(ItemPedidoBase):
+    """
+    Base de dados para criar/atualizar itens de pedido.
+    """
+    quantidade: Optional[int] = None
+    preco_unitario: Optional[float] = None
 
 class PedidoBase(BaseModel):
     unidade_id: int

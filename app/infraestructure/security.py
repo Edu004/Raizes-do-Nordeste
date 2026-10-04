@@ -2,6 +2,9 @@ import bcrypt
 import jwt # type: ignore
 from datetime import datetime, timedelta
 import os
+from app.application.services import auth_service
+
+
 
 def gerar_senha(senha: str) -> str:
     """
@@ -24,11 +27,10 @@ def gerar_token(payload: dict, expira_em_minutos: int = 30) -> str:
     #rever como que isso será feito pois o id do cliente não é um dicionário!!!
     #
     #"""
-    #payload_copy = payload.copy()
-    #payload_copy['exp'] = datetime.utcnow() + timedelta(minutes=expira_em_minutos)
-    #secret_key = os.getenv("JWT_SECRET_KEY", "sua_chave_secreta_aqui")
-    #token = jwt.encode(payload_copy, secret_key, algorithm="HS256")
-    return auth_service.autenticar_cliente(db: Session,cliente_id: int,senha: str)
-
+    payload_copy = payload.copy()
+    payload_copy['exp'] = datetime.utcnow() + timedelta(minutes=expira_em_minutos)
+    secret_key = os.getenv("JWT_SECRET_KEY", "sua_chave_secreta_aqui")
+    token = jwt.encode(payload_copy, secret_key, algorithm="HS256")
+    return token
 
 

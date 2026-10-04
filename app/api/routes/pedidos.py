@@ -17,13 +17,9 @@ TRANSICOES_PERMITIDAS = {
 }
 
 @router.post("/", status_code=201)
-def criar_pedido():
-    return pedido_service.criar_pedido()
-    #novo = Pedido(pedido_id= dados.id , unidade_id = dados.unidade_id , canalpedido=dados.#canal_pedido)
-    #db.add(novo)
-    #db.commit()
-    #db.refresh(novo)
-    #return {"id": novo.id, "status": novo.status}
+def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
+    return pedido_service.criar_pedido(db: Session,unidade_id= pedido.unidade_id,cliente_id=pedido.cliente_id,canal_pedido=pedido.canal_pedido ,total=pedido.total)
+    
 
 
 @router.get("/pedidos",
