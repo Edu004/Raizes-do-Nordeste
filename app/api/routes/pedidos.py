@@ -18,14 +18,14 @@ def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
     
 
 
-@router.get("/pedidos",
+@router.get("/",
     response_model=List[PedidoOut],
     summary="Listar pedidos",
     tags=["pedidos"]
 )
 #criar função de listar e jogar ela para o service
-def listar_pedidos(pedido:PedidoBase,db:Session = Depends(get_db)):
-    return pedido_service.listar_pedidos(pedido=pedido,db=db)
+def listar_pedidos(canal_pedido: str | None = None, db: Session = Depends(get_db)):#validando por canal_pedido
+    return pedido_service.listar_pedidos(db=db, canal_pedido=canal_pedido)
 
 
 @router.patch("/{pedido_id}/status")

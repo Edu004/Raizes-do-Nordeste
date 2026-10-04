@@ -1,7 +1,7 @@
 
 from typing import Optional
 from pydantic import BaseModel
-
+from datetime import datetime
 
 class ClienteBase(BaseModel):
     nome:str
@@ -90,14 +90,14 @@ class ProdutoUnidadeBase(BaseModel):
     produto_id: int
     unidade_id: int
     preco: float
-    disponivel_de: str  # ISO 8601 date string
-    disponivel_ate: Optional[str] = None  # ISO 8601 date string
+    disponivel_de: datetime  # ISO 8601 date string
+    disponivel_ate: Optional[datetime] = None  # ISO 8601 date string
 
 class ProdutoUnidadeUpdate(ProdutoUnidadeBase):
     #criar/atualizar produto da unidade
     preco: Optional[float] = None
-    disponivel_de: Optional[str] = None  # ISO 8601 date string
-    disponivel_ate: Optional[str] = None  # ISO 8601 date string
+    disponivel_de: Optional[datetime] = None  # ISO 8601 date string
+    disponivel_ate: Optional[datetime] = None  # ISO 8601 date string
 
 
 

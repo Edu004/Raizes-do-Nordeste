@@ -54,7 +54,9 @@ def autenticar_cliente(
         return None
 
     if not verificar_senha(senha, cliente.senha_hash):
-        return None
+        raise HTTPException(
+                    status_code=401,
+                    detail="Senha incorreta")
 
     token = gerar_token({
         "sub": str(cliente.id)

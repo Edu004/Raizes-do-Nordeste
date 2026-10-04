@@ -25,7 +25,7 @@ def criar_pedido(
     unidade_id: int,
     cliente_id: int,
     canal_pedido: str,
-    total: float,
+    #total: float, testar rodar sem ele
     itens:list
 ):
     #verificar unidade
@@ -83,7 +83,7 @@ def criar_pedido(
         
         db.add(novo_item)
         total += produto_unidade.preco * item.quantidade
-        novo_pedido.total = total
+        
         #validar preço do pedido antes de criar ele
         #calcular total
         #diminuir do estoque e mostrar o que foi pago,ir para o pagamento_service nessa parte*
@@ -117,7 +117,7 @@ def atualizar_status(db: Session,
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
 
-    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#dicionario validado
+    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#dicionario validado conforme as transações que um pedido tem
     if novo_status not in permitidos:
         raise HTTPException(
             status_code=409,

@@ -23,6 +23,7 @@ def processar_pagamento(
 
     if pagamento_aprovado:
         status = "APROVADO"
+
     else:
         status = "RECUSADO"
 
@@ -36,8 +37,22 @@ def processar_pagamento(
 
     if status == "APROVADO":
         pedido.status = "CONFIRMADO"
+        #logica de decrementar produtos do pedido no estoque
+        
+        for item in pedido.itens:
+            produto_unidade = (
+                db.query(Pagamento)
+                .filter(
+                    Pagamento.produto_id == item.produto_id,
+                    Pagamento.unidade_id == pedido.unidade_id
+                )
+                .first()
+            )
+            if produto_unidade:
+                produto_unidade.quantidade -= item.quantidade
+                db.commit()
 
-    db.commit()
+    
     db.refresh(pagamento)
 
     return pagamento, None
