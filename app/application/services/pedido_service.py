@@ -4,16 +4,23 @@ from http.client import HTTPException
 
 from sqlalchemy.orm import Session
 from starlette.exceptions import HTTPException
-from app.domain.models import Pedido
+from app.domain.models import Pedido,ProdutoUnidade,ItemPedido
 from app.domain import enums
 from app.schemas import ProdutoUnidadeBase
 from app.schemas import ItemPedidoBase,ItemPedidoUpdate
 
 
+# mapa de transições permitidas em conformidade com enums
 TRANSICOES_PERMITIDAS = {
+    "PENDENTE": ["CONFIRMADO", "CANCELADO"],
+    "CONFIRMADO": ["EM_PREPARACAO", "CANCELADO"],
+    "EM_PREPARACAO": ["PRONTO", "CANCELADO"],
+    "PRONTO": ["ENTREGUE", "CANCELADO"],
+    "ENTREGUE": ["CONCLUIDO", "CANCELADO"],
+    "CANCELADO": []
 
-    "PENDENTE","CONFIRMADO","EM_PREPARACAO","PRONTO","ENTREGUE","CANCELADO"
 }
+
 
 def criar_pedido(
     db: Session,
@@ -42,11 +49,10 @@ def criar_pedido(
     #passando pela validação de canal começar o valor
     total = 0
     for item in itens:
-        item = ItemPedidoBase(itens)
         #diminuir do estoque e mostrar o que foi pago
-        produto_unidade = db.query(ProdutoUnidadeBase).filter(
-            ProdutoUnidadeBase.produto_id == item.produto_id,
-            ProdutoUnidadeBase.unidade_id == unidade_id
+        produto_unidade = db.query(ProdutoUnidade).filter(
+            ProdutoUnidade.produto_id == item.produto_id,
+            ProdutoUnidade.unidade_id == unidade_id
         ).first()
         total += produto_unidade.preco * item.quantidade
     

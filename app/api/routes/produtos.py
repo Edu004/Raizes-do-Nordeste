@@ -32,7 +32,7 @@ def criar_produto(
 
 
 
-@router.get("/",status_code=201)
+@router.get("/",status_code=200)
 def listar_produtos(
     db: Session = Depends(get_db)
 ):
@@ -72,7 +72,7 @@ def atualizar_produto(
         "categoria": produto.categoria
     }
 
-@router.delete("/{produto_id}", status_code=204)
+@router.delete("/{produto_id}", status_code=200)
 def deletar_produto(
     produto_id: int,
     db: Session = Depends(get_db)

@@ -10,11 +10,7 @@ from app.schemas import PedidoBase, PedidoUpdate , PedidoOut #pedidoupdate não 
 
 router = APIRouter(prefix="/pedidos", tags=["pedidos"])
 
-# mapa de transições permitidas em conformidade com enums
-TRANSICOES_PERMITIDAS = {
 
-    "PENDENTE","CONFIRMADO","EM_PREPARACAO","PRONTO","ENTREGUE","CANCELADO"
-}
 
 @router.post("/", status_code=201)
 def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
@@ -28,8 +24,8 @@ def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
     tags=["pedidos"]
 )
 #criar função de listar e jogar ela para o service
-def listar_pedidos():
-    return pedido_service.listar_pedidos()
+def listar_pedidos(pedido:PedidoBase,db:Session = Depends(get_db)):
+    return pedido_service.listar_pedidos(pedidod=pedido,db=db)
 
 
 @router.patch("/{pedido_id}/status")

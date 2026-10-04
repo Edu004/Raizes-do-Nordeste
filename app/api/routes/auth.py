@@ -14,7 +14,7 @@ def registrar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
     return auth_service.registrar_cliente(db=db, nome=cliente.nome, senha=cliente.senha,tipo_cliente=cliente.tipo_cliente)
 
 
-@router.post("/validation")
+@router.post("/login")
 def autenticar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
     return auth_service.autenticar_cliente(db= db,nome=cliente.nome,senha= cliente.senha)
 
@@ -22,7 +22,7 @@ def autenticar_cliente(cliente: ClienteBase , db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    return auth_service.login(db=db, nome=request.nome, senha=request.senha)
+    return auth_service.autenticar_cliente(db, request.nome, request.senha)
 
 
 
