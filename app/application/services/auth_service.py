@@ -41,8 +41,8 @@ def registrar_cliente(
 def autenticar_cliente(
     db: Session,
     nome: str,
-    senha: str,
-    tipo_cliente: str
+    senha: str
+    #tipo_cliente: str não esta sendo utilizado então pode sair*
 ):
     cliente = (
         db.query(Cliente)

@@ -14,7 +14,7 @@ router = APIRouter(prefix="/pedidos", tags=["pedidos"])
 
 @router.post("/", status_code=201)
 def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
-    return pedido_service.criar_pedido(db=db,unidade_id= pedido.unidade_id,cliente_id=pedido.cliente_id,canal_pedido=pedido.canal_pedido ,total=pedido.total)
+    return pedido_service.criar_pedido(db=db,unidade_id= pedido.unidade_id,cliente_id=pedido.cliente_id,canal_pedido=pedido.canal_pedido ,total=pedido.total,itens=pedido.itens)
     
 
 

@@ -63,13 +63,7 @@ def criar_pedido(
             status_code=409,
             detail=f"Estoque insuficiente para o produto {item.produto_id}"
         )#existindo produto e estoque necessário,criar novo item
-        novo_item = ItemPedido(
-        pedido_id=novo_pedido.id,
-        produto_id=item.produto_id,
-        quantidade=item.quantidade,
-        valor_unitario=produto_unidade.preco  # o preço do banco, de novo
-        )
-        db.add(novo_item)
+        
         total += produto_unidade.preco * item.quantidade
         #validar preço do pedido antes de criar ele
         #calcular total
@@ -85,6 +79,14 @@ def criar_pedido(
     )   
     db.add(novo_pedido)
     db.flush()  # gera o id do pedido, mas não fecha a transação ainda para que ela termine de ser validada no commit depois
+    novo_item = ItemPedido(
+            pedido_id=novo_pedido.id,
+            produto_id=item.produto_id,
+            quantidade=item.quantidade,
+            valor_unitario=produto_unidade.preco  # o preço do banco, de novo
+            )
+
+    db.add(novo_item)
     db.commit()
     db.refresh(novo_pedido)
     return novo_pedido
