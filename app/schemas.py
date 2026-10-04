@@ -40,7 +40,7 @@ class ProdutoUpdate(ProdutoBase):
 class ItemPedidoBase(BaseModel):
     produto_id: int
     quantidade: int
-    preco_unitario: float
+    
 
 class ItemPedidoUpdate(ItemPedidoBase):
     #criar ou atualizar itens de pedidos
@@ -52,8 +52,6 @@ class PedidoBase(BaseModel):
     cliente_id: Optional[int] = None
     cupom_id: Optional[int] = None
     canal_pedido: str
-    status: str = "PENDENTE"
-    total: float
     itens : list[ItemPedidoBase] = []#listar conforme a base de um item do pedido
 
 class PedidoUpdate(PedidoBase):

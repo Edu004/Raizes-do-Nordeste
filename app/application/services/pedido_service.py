@@ -104,11 +104,14 @@ def criar_pedido(
     
 
 
-def listar_pedidos(
-    db: Session
-):
-    pedidos = db.query(Pedido).all()
-    return pedidos
+def listar_pedidos(db: Session,canal_pedido: str = None):
+    query = db.query(Pedido)
+
+    if canal_pedido:
+        query = query.filter(Pedido.canal_pedido == canal_pedido)
+        return query.all()
+
+        
 
 def atualizar_status(db: Session,
     id: int,
