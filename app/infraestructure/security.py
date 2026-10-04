@@ -2,11 +2,10 @@ import bcrypt
 import jwt # type: ignore
 from datetime import datetime, timedelta
 import os
-from app.application.services import auth_service
 
 
 
-def gerar_senha(senha: str) -> str:
+def gerar_hash_senha(senha: str) -> str:
     """
     Gera um hash seguro para a senha fornecida usando bcrypt.
     """

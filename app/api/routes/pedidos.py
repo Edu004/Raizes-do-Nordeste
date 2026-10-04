@@ -18,7 +18,7 @@ TRANSICOES_PERMITIDAS = {
 
 @router.post("/", status_code=201)
 def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
-    return pedido_service.criar_pedido(db: Session,unidade_id= pedido.unidade_id,cliente_id=pedido.cliente_id,canal_pedido=pedido.canal_pedido ,total=pedido.total)
+    return pedido_service.criar_pedido(db=db,unidade_id= pedido.unidade_id,cliente_id=pedido.cliente_id,canal_pedido=pedido.canal_pedido ,total=pedido.total)
     
 
 
@@ -34,21 +34,8 @@ def listar_pedidos():
 
 @router.patch("/{pedido_id}/status")
 #passar para service
-def atualizar_status(pedido_id: int, novo_status: str, db: Session = Depends(get_db)):
-    pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
-    if not pedido:
-        raise HTTPException(status_code=404, detail="Pedido não encontrado")
-
-    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#mudar a lógica e nao usar .get
-    if novo_status not in permitidos:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Transição de {pedido.status} para {novo_status} não permitida",
-        )
-
-    pedido.status = novo_status
-    db.commit()
-    return {"id": pedido.id, "status": pedido.status}
+def atualizar_status(id: int, novo_status: str, db: Session = Depends(get_db)):
+    return pedido_service.atualizar_status(db=db,id=id,novo_status= novo_status)
 
 
 

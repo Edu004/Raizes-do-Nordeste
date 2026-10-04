@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.infraestructure.database import get_db
 from app.domain.models import Cliente
 from app.schemas import ClienteBase, LoginRequest 
-from app.infraestructure.security import gerar_senha, verificar_senha, gerar_token
+from app.infraestructure.security import gerar_hash_senha, verificar_senha, gerar_token
 from app.application.services import auth_service
 
 #/ do auth

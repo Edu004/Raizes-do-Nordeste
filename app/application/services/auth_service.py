@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.domain.models import Cliente
 from app.schemas import ClienteBase, LoginRequest 
 from app.infraestructure.security import (
-    gerar_senha,
+    gerar_hash_senha,
     verificar_senha,
     gerar_token
 )
@@ -27,7 +27,7 @@ def registrar_cliente(
     novo_cliente = Cliente(
         tipo_cliente=tipo_cliente,
         nome=nome,
-        senha_hash=gerar_senha(senha)
+        senha=gerar_hash_senha(senha)
     )
 
     db.add(novo_cliente)
@@ -69,7 +69,7 @@ def login(db: Session,
 
     # Verifica se o usuário existe
     cliente = db.query(Cliente).filter(Cliente.nome == request.nome).first()#como tratar em casosde clientes anonimos?
-    if not cliente or not verificar_senha(request.senha, cliente.senha_hash):
+    if not cliente or not verificar_senha(request.senha, cliente.senha):
         raise HTTPException(status_code=401, detail="Senha inválida")
     
     # Gera token JWT

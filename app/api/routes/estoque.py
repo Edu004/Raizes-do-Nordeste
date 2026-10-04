@@ -44,7 +44,7 @@ def listar_estoque(
 	return estoque
 
 
-@router.get("/unidades/{unidade_id}/cardapio", response_model=list[Estoque])
+@router.get("/unidades/{unidade_id}/cardapio")
 def consultar_estoque_id(unidade_id: int,db: Session = Depends(get_db)):
 	estoque = db.query(Estoque).filter(Estoque.unidade_id == unidade_id).all()
 	return estoque

@@ -22,8 +22,6 @@ app.include_router(pedidos.router)
 app.include_router(pagamentos.router)
 
 
-# incializar tabelas no banco e só criando elas se não existir
-Base.metadata.create_all(bind=engine)
 
 #import dos modelos
 from app.domain.models import (
@@ -37,6 +35,9 @@ from app.domain.models import (
     Pagamento,
     Cupom
 )
+
+# incializar tabelas no banco e só criando elas se não existir
+Base.metadata.create_all(bind=engine)
 
 
 #testar se a api está funcionando

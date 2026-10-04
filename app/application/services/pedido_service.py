@@ -1,6 +1,9 @@
 
 
+from http.client import HTTPException
+
 from sqlalchemy.orm import Session
+from starlette.exceptions import HTTPException
 from app.domain.models import Pedido
 from app.domain import enums
 from app.schemas import ProdutoUnidadeBase
@@ -83,8 +86,23 @@ def listar_pedidos(
     pedidos = db.query(Pedido).all()
     return pedidos
 
-def atualizar_status():
-    pass
+def atualizar_status(db: Session,
+    id: int,
+    novo_status: str):
+    pedido = db.query(Pedido).filter(Pedido.id == id).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+
+    permitidos = TRANSICOES_PERMITIDAS.get(pedido.status, [])#mudar a lógica e nao usar .get
+    if novo_status not in permitidos:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Transição de {pedido.status} para {novo_status} não permitida",
+        )
+
+    pedido.status = novo_status
+    db.commit()
+    return {"id": pedido.id, "status": pedido.status}
 
 
 
