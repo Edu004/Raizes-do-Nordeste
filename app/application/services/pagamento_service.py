@@ -42,9 +42,9 @@ def processar_pagamento(
             estoque = db.query(Estoque).filter(
             Estoque.produto_id == item.produto_id,
             Estoque.unidade_id == pedido.unidade_id
-        ).first()
-        if estoque:
-            estoque.quantidade -= item.quantidade
+        ).first()    
+            if estoque:
+                estoque.quantidade -= item.quantidade
 
     db.commit()
     db.refresh(pagamento)
