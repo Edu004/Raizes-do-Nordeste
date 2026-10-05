@@ -58,6 +58,7 @@ def criar_pedido(
             ProdutoUnidade.produto_id == item.produto_id,
             ProdutoUnidade.unidade_id == unidade_id
         ).first()
+        
         #se não estiver disponivel na unidade selecionada
         if not produto_unidade:
             raise HTTPException(
@@ -84,6 +85,7 @@ def criar_pedido(
         
         db.add(novo_item)
         total += produto_unidade.preco * item.quantidade
+        novo_pedido.total = total
         
         #validar preço do pedido antes de criar ele
         #calcular total
@@ -105,13 +107,14 @@ def criar_pedido(
     
 
 
-def listar_pedidos(db: Session,canal_pedido: str = None):
+def listar_pedidos(db: Session, canal_pedido: str = None):
     query = db.query(Pedido)
     if canal_pedido:
         query = query.filter(Pedido.canal_pedido == canal_pedido)
-    return query.all()
-
-
+    pedidos = query.all()
+    if canal_pedido and not pedidos:
+        raise HTTPException(status_code=404, detail=f"Nenhum pedido encontrado para o canal {canal_pedido}")
+    return pedidos
 
 def atualizar_status(db: Session,
     id: int,

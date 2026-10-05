@@ -18,21 +18,14 @@ def criar_pedido(pedido:PedidoBase,db: Session = Depends(get_db) , ):
     
 
 
+# routes/pedidos.py
 @router.get("/",
     response_model=List[PedidoOut],
     summary="Listar pedidos",
     tags=["pedidos"]
 )
-#criar função de listar e jogar ela para o service
-def listar_pedidos(db: Session, canal_pedido: str = None):
-    query = db.query(Pedido)
-    if canal_pedido:
-        query = query.filter(Pedido.canal_pedido == canal_pedido)
-        #validando por canal_pedido
-    pedidos = query.all()
-    if canal_pedido and not pedidos:
-        raise HTTPException(status_code=404, detail=f"Nenhum pedido encontrado para o canal {canal_pedido}")
-    return pedidos
+def listar_pedidos(canal_pedido: str | None = None, db: Session = Depends(get_db)):
+    return pedido_service.listar_pedidos(db=db, canal_pedido=canal_pedido)
 
 
 @router.patch("/{pedido_id}/status")

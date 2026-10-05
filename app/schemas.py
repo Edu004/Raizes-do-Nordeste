@@ -1,6 +1,6 @@
 
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 class ClienteBase(BaseModel):
@@ -17,8 +17,7 @@ class ClienteUpdate(ClienteBase):
     nome: Optional[str] = None
     usuario_id: Optional[int] = None
     
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class LoginRequest(BaseModel):
     nome: str
@@ -38,6 +37,7 @@ class ProdutoUpdate(ProdutoBase):
 
 
 class ItemPedidoBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     produto_id: int
     quantidade: int
     
@@ -66,10 +66,9 @@ class PedidoOut(PedidoBase):
     canal_pedido: str
     status: str
     total: float
-    produtos : list[ProdutoUpdate] = []
+    #produtos : list[ProdutoUpdate] = []
 
-    class Config:
-        orm_mode = True  # Permite compatibilidade com ORM (SQLAlchemy)
+    model_config = ConfigDict(from_attributes=True)  # Permite compatibilidade com ORM (SQLAlchemy)
 
 
 class UnidadeBase(BaseModel):

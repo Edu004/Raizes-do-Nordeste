@@ -2,7 +2,7 @@
 
 
 from decimal import Decimal #usar?
-
+from sqlalchemy.orm import relationship
 from sqlalchemy import Boolean, Column, Integer, String, DateTime , Numeric , ForeignKey
 from app.infraestructure.database import Base
 
@@ -62,7 +62,8 @@ class Pedido(Base):
     canal_pedido = Column(String(50), nullable=False, index=True)
     status = Column(String(50), nullable=False, index=True)
     total = Column(Numeric(10,2), nullable=False)
-    
+    itens = relationship("ItemPedido", backref="pedido")#relacionamento para poder salvar itens do pedido depois
+
 class ItemPedido(Base):
     __tablename__ = "itens_pedido"
 
