@@ -6,7 +6,7 @@ from app.infraestructure.database import get_db
 from app.application.services import pedido_service
 from app.domain.models import Pedido
 from app.schemas import PedidoBase, PedidoUpdate , PedidoOut #pedidoupdate não foi usado?
-
+from app.infraestructure.security import exigir_perfil
 
 router = APIRouter(prefix="/pedidos", tags=["pedidos"])
 
@@ -30,7 +30,12 @@ def listar_pedidos(canal_pedido: str | None = None, db: Session = Depends(get_db
 
 @router.patch("/{pedido_id}/status")
 #passar para service
-def atualizar_status(pedido_id: int, novo_status: str, db: Session = Depends(get_db)):
+def atualizar_status(
+    pedido_id: int,
+    novo_status: str,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(exigir_perfil("COZINHA", "GERENTE"))
+):
     return pedido_service.atualizar_status(db=db,id=pedido_id,novo_status= novo_status)
 
 

@@ -2,6 +2,7 @@ import bcrypt
 import jwt 
 from datetime import datetime, timedelta
 import os
+from fastapi import Depends, HTTPException, Header
 
 
 
@@ -27,3 +28,23 @@ def gerar_token(payload: dict, expira_em_minutos: int = 30) -> str:
     return token
 
 
+
+def verificar_token(authorization: str = Header(None)):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Token não fornecido")
+    token = authorization.replace("Bearer ", "")
+    try:
+        secret_key = os.getenv("JWT_SECRET_KEY", "sua_chave_secreta_aqui")
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expirado")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token inválido")
+
+def exigir_perfil(*perfis_permitidos):
+    def verificador(payload: dict = Depends(verificar_token)):
+        if payload.get("tipo_cliente") not in perfis_permitidos:
+            raise HTTPException(status_code=403, detail="Perfil sem permissão para essa ação")
+        return payload
+    return verificador

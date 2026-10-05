@@ -59,7 +59,8 @@ def autenticar_cliente(
                     detail="Senha incorreta")
 
     token = gerar_token({
-        "sub": str(cliente.id)
+        "sub": str(cliente.id),
+        "tipo_cliente": cliente.tipo_cliente
     })
 
     return token
