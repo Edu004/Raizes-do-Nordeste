@@ -52,7 +52,7 @@ class PedidoBase(BaseModel):
     cliente_id: Optional[int] = None
     cupom_id: Optional[int] = None
     canal_pedido: str
-    itens : list[ItemPedidoBase] = []#listar conforme a base de um item do pedido
+    itens : list[ItemPedidoBase]#listar conforme a base de um item do pedido
 
 class PedidoUpdate(PedidoBase):
     #criar/atualizar pedidos

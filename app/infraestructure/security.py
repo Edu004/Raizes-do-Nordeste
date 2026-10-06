@@ -48,3 +48,5 @@ def exigir_perfil(*perfis_permitidos):
             raise HTTPException(status_code=403, detail="Perfil sem permissão para essa ação")
         return payload
     return verificador
+
+    

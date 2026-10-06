@@ -1,7 +1,3 @@
-# Raizes-do-Nordeste
-
-
-
 
 # Raízes do Nordeste — API
 
@@ -19,7 +15,7 @@ desenvolvida como projeto da disciplina de Back-End (ADS).
 
 ## Dependências
 
-Lista completa em `requirements.txt`. Principais:
+Verifique em `requirements.txt`. Principais:
 `fastapi`, `uvicorn`, `sqlalchemy`, `pydantic`, `PyJWT`, `bcrypt`.
 
 ## Variáveis de ambiente
@@ -57,7 +53,7 @@ rodar nenhum comando de migração separado.
 Se você alterar algum model (adicionar uma coluna, por exemplo) e a
 tabela já existir no seu `estoque.db` local, é necessário apagar esse
 arquivo manualmente para que ele seja recriado com a estrutura nova
-(o SQLite/SQLAlchemy, nesse projeto, não altera tabelas já criadas).
+(o SQLite/SQLAlchemy, nesse projeto, não altera tabelas já criadas).Este controle é útil para futuras correções no código.
 
 ## Como iniciar a API
 
@@ -88,12 +84,6 @@ Lá é possível testar todos os endpoints diretamente pelo navegador.
    conforme a máquina de estados (PENDENTE → CONFIRMADO →
    EM_PREPARACAO → PRONTO → ENTREGUE, ou CANCELADO)
 
-## Como rodar os testes
-
-Os cenários de teste do projeto foram validados manualmente via
-Swagger, documentados na seção de Plano de Testes do documento de
-entrega (`<RU>_Projeto_Back_End.pdf`), com evidências em print de
-tela de cada cenário.
 
 ## Estrutura do projeto
 
